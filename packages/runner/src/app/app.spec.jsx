@@ -19,6 +19,7 @@ const createProps = () => ({
     viewportHeight: 800,
     viewportWidth: 500,
     state: {},
+    env: {},
   },
   eventManager: {
     notifyRunningSpec: sinon.spy(),

@@ -57,18 +57,20 @@ class Reporter extends Component {
   }
 
   render () {
-    const { appState } = this.props
+    const { appState, isQuickGui } = this.props
 
     return (
       <div className={cs('reporter', { 'is-running': appState.isRunning })}>
         <Header appState={appState} statsStore={this.props.statsStore} />
-        <Runnables
-          appState={appState}
-          error={this.props.error}
-          runnablesStore={this.props.runnablesStore}
-          scroller={this.props.scroller}
-          specPath={this.props.specPath}
-        />
+        {!isQuickGui && (
+          <Runnables
+            appState={appState}
+            error={this.props.error}
+            runnablesStore={this.props.runnablesStore}
+            scroller={this.props.scroller}
+            specPath={this.props.specPath}
+          />
+        )}
       </div>
     )
   }

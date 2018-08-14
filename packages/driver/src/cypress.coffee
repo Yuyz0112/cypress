@@ -110,7 +110,7 @@ class $Cypress
     ## not we're in a text terminal, but we keep this
     ## as a separate property so we can potentially
     ## slice up the behavior
-    config.isInteractive = !config.isTextTerminal
+    config.isInteractive = !config.isTextTerminal && !config.env.quick_gui
 
     ## enable long stack traces when
     ## we not are running headlessly
