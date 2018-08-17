@@ -41,10 +41,14 @@ class Reporter extends Component {
   }
 
   componentWillMount () {
-    const { appState, autoScrollingEnabled, runnablesStore, runner, scroller, statsStore } = this.props
+    const { appState, autoScrollingEnabled, runnablesStore, runner, scroller, statsStore, isQuickGui } = this.props
 
     action('set:scrolling', () => {
       appState.setAutoScrolling(autoScrollingEnabled)
+    })()
+
+    action('set:runnables', () => {
+      appState.setRunnables(!isQuickGui)
     })()
 
     this.props.events.init({
@@ -57,12 +61,12 @@ class Reporter extends Component {
   }
 
   render () {
-    const { appState, isQuickGui } = this.props
+    const { appState } = this.props
 
     return (
       <div className={cs('reporter', { 'is-running': appState.isRunning })}>
         <Header appState={appState} statsStore={this.props.statsStore} />
-        {!isQuickGui && (
+        {appState.showRunnables && (
           <Runnables
             appState={appState}
             error={this.props.error}

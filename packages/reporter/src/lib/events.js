@@ -140,6 +140,10 @@ export default {
         autoScrollingEnabled: appState.autoScrollingEnabled,
       })
     })
+
+    localBus.on('set:runnables', action('set:runnables', () => {
+      appState.setRunnables(!appState.showRunnables)
+    }))
   },
 
   emit (event, ...args) {

@@ -6,6 +6,7 @@ const defaults = {
   isRunning: false,
   nextCommandName: null,
   pinnedSnapshotId: null,
+  showRunnables: true,
 }
 
 class AppState {
@@ -14,9 +15,14 @@ class AppState {
   @observable isRunning = defaults.isRunning
   @observable nextCommandName = defaults.nextCommandName
   @observable pinnedSnapshotId = defaults.pinnedSnapshotId
+  @observable showRunnables = defaults.showRunnables
 
   isStopped = false
   _resetAutoScrollingEnabledTo = true
+
+  setRunnables (val) {
+    this.showRunnables = val
+  }
 
   startRunning () {
     this.isRunning = true
