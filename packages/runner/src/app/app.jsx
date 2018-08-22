@@ -37,7 +37,6 @@ class App extends Component {
             runner={this.props.eventManager.reporterBus}
             specPath={specPath}
             autoScrollingEnabled={this.props.config.state.autoScrollingEnabled}
-            isQuickGui={this.props.config.env.quick_gui}
             error={errorMessages.reporterError(this.props.state.scriptError, specPath)}
           />
         </div>

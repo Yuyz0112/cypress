@@ -15,7 +15,7 @@ const Header = observer(({ appState, events, statsStore }) => (
         <span>Tests</span>
       </button>
     </Tooltip>
-    <button onClick={() => events.emit('set:runnables')}>
+    <button onClick={() => events.emit('toggle:runnables')}>
       {appState.showRunnables ? 'Hide' : 'Show'}
     </button>
     <Stats stats={statsStore} />

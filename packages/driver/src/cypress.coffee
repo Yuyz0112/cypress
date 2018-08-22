@@ -110,7 +110,9 @@ class $Cypress
     ## not we're in a text terminal, but we keep this
     ## as a separate property so we can potentially
     ## slice up the behavior
-    config.isInteractive = !config.isTextTerminal && !config.env.quick_gui
+    config.isInteractive = !config.isTextTerminal
+
+    config.takeSnapshot = true
 
     ## enable long stack traces when
     ## we not are running headlessly
@@ -388,6 +390,9 @@ class $Cypress
 
       when "spec:script:error"
         @emit("script:error", args...)
+      
+      when "toggle:snapshot"
+        @config("takeSnapshot", args[0])
 
   backend: (eventName, args...) ->
     new Promise (resolve, reject) =>

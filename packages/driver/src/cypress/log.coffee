@@ -263,7 +263,7 @@ Log = (state, config, obj) ->
       ## bail early and dont snapshot
       ## if we're in headless mode
       ## TODO: fix this
-      if not config("isInteractive")
+      if not config("isInteractive") or not config("takeSnapshot")
         return @
 
       _.defaults options,

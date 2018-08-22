@@ -41,14 +41,10 @@ class Reporter extends Component {
   }
 
   componentWillMount () {
-    const { appState, autoScrollingEnabled, runnablesStore, runner, scroller, statsStore, isQuickGui } = this.props
+    const { appState, autoScrollingEnabled, runnablesStore, runner, scroller, statsStore } = this.props
 
     action('set:scrolling', () => {
       appState.setAutoScrolling(autoScrollingEnabled)
-    })()
-
-    action('set:runnables', () => {
-      appState.setRunnables(!isQuickGui)
     })()
 
     this.props.events.init({

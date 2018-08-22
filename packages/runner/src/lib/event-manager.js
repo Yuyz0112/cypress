@@ -135,6 +135,12 @@ const eventManager = {
       this.saveState(state)
     })
 
+    reporterBus.on('toggle:snapshot', (payload) => {
+      if (!Cypress) return
+
+      Cypress.action('toggle:snapshot', payload)
+    })
+
     const $window = $(window)
 
     $window.on('hashchange', rerun)

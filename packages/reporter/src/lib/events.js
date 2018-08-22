@@ -141,8 +141,10 @@ export default {
       })
     })
 
-    localBus.on('set:runnables', action('set:runnables', () => {
-      appState.setRunnables(!appState.showRunnables)
+    localBus.on('toggle:runnables', action('toggle:runnables', () => {
+      const state = !appState.showRunnables
+      appState.setRunnables(state)
+      runner.emit('toggle:snapshot', state)
     }))
   },
 
