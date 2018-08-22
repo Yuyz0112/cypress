@@ -12,6 +12,7 @@ build
 .publish
 _test-output
 cypress.zip
+cypress_*.zip
 tmp/
 .nyc_output
 

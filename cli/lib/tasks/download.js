@@ -1,3 +1,7 @@
+/**
+ * This fork modify the download url and related functions.
+ */
+
 const la = require('lazy-ass')
 const is = require('check-more-types')
 const os = require('os')
@@ -13,13 +17,13 @@ const { throwFormErrorText, errors } = require('../errors')
 const fs = require('../fs')
 const util = require('../util')
 
-const baseUrl = 'https://download.cypress.io/'
+const baseUrl = 'http://pdupp2kei.bkt.clouddn.com/'
 
 const prepend = (urlPath) => {
   const endpoint = url.resolve(baseUrl, urlPath)
   const platform = os.platform()
   const arch = os.arch()
-  return `${endpoint}?platform=${platform}&arch=${arch}`
+  return `${endpoint}_${platform}_${arch}.zip`
 }
 
 const getUrl = (version) => {
@@ -27,7 +31,7 @@ const getUrl = (version) => {
     debug('version is already an url', version)
     return version
   }
-  return version ? prepend(`desktop/${version}`) : prepend('desktop')
+  return prepend('cypress')
 }
 
 const statusMessage = (err) =>
