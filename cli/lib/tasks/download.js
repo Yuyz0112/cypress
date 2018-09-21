@@ -17,7 +17,7 @@ const { throwFormErrorText, errors } = require('../errors')
 const fs = require('../fs')
 const util = require('../util')
 
-const baseUrl = 'http://pdupp2kei.bkt.clouddn.com/'
+const baseUrl = 'http://binary.myriptide.com/'
 
 const prepend = (urlPath) => {
   const endpoint = url.resolve(baseUrl, urlPath)
