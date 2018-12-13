@@ -106,9 +106,12 @@ export default {
 
     localBus.on('show:error', (testId) => {
       const test = runnablesStore.testById(testId)
+
       if (test.err.isCommandErr) {
         const command = test.commandMatchingErr()
+
         if (!command) return
+
         runner.emit('runner:console:log', command.id)
       } else {
         runner.emit('runner:console:error', testId)
@@ -143,6 +146,7 @@ export default {
 
     localBus.on('toggle:runnables', action('toggle:runnables', () => {
       const state = !appState.showRunnables
+
       appState.setRunnables(state)
       runner.emit('toggle:snapshot', state)
     }))
