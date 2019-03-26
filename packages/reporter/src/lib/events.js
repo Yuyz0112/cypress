@@ -150,6 +150,10 @@ export default {
       appState.setRunnables(state)
       runner.emit('toggle:snapshot', state)
     }))
+
+    localBus.on('external:open', (url) => {
+      runner.emit('external:open', url)
+    })
   },
 
   emit (event, ...args) {

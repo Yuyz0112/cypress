@@ -1,5 +1,6 @@
 $ = require("jquery")
 _ = require("lodash")
+methods = require("methods")
 moment = require("moment")
 Promise = require("bluebird")
 
@@ -42,6 +43,16 @@ module.exports = {
       return item.first()
 
     return item
+
+  switchCase: (value, casesObj, defaultKey = "default") ->
+    if _.has(casesObj, value)
+      return _.result(casesObj, value)
+
+    if _.has(casesObj, defaultKey)
+      return _.result(casesObj, defaultKey)
+
+    keys = _.keys(casesObj)
+    throw new Error("The switch/case value: '#{value}' did not match any cases: #{keys.join(', ')}.")
 
   appendErrMsg: (err, message) ->
     ## preserve stack
@@ -278,6 +289,9 @@ module.exports = {
     cmd.get("name") is "then" and
       args.length is 3 and
         _.every(args, _.isFunction)
+
+  isValidHttpMethod: (str) ->
+    _.isString(str) and _.includes(methods, str.toLowerCase())
 
   addTwentyYears: ->
     moment().add(20, "years").unix()

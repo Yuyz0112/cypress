@@ -864,6 +864,14 @@ describe "src/cy/commands/xhr", ->
         .then ->
           expect(cy.state("server").getRoutes()[0].delay).to.eq(100)
 
+    it "passes event argument to xhr.onreadystatechange", (done) ->
+      cy.window().then (win) ->
+        xhr = new win.XMLHttpRequest()
+        xhr.onreadystatechange = (e) ->
+          expect(e).to.be.an.instanceof(win.Event)
+          done()
+        xhr.open("GET", "http://localhost:3500/")
+
     describe "errors", ->
       context "argument signature", ->
         _.each ["asdf", 123, null, undefined], (arg) ->
@@ -1307,6 +1315,18 @@ describe "src/cy/commands/xhr", ->
         .wait("@getFoo").then (xhr) ->
           expect(xhr.responseBody).to.eq "foo bar baz"
 
+    it "can stub requests with uncommon HTTP methods", ->
+      cy
+        .route("PROPFIND", "/foo", "foo bar baz").as("getFoo")
+        .window().then (win) ->
+          win.$.ajax({
+            url: "/foo"
+            method: "PROPFIND"
+          })
+          null
+        .wait("@getFoo").then (xhr) ->
+          expect(xhr.responseBody).to.eq "foo bar baz"
+
     it.skip "does not error when response is null but respond is false", ->
       cy.route
         url: /foo/
@@ -1434,9 +1454,9 @@ describe "src/cy/commands/xhr", ->
 
         cy.route(getUrl)
 
-      it "url must be one of get, put, post, delete, patch, head, options", (done) ->
+      it "fails when method is invalid", (done) ->
         cy.on "fail", (err) ->
-          expect(err.message).to.include "cy.route() was called with an invalid method: 'POSTS'.  Method can only be: GET, POST, PUT, DELETE, PATCH, HEAD, OPTIONS"
+          expect(err.message).to.include "cy.route() was called with an invalid method: 'POSTS'."
           done()
 
         cy.route("posts", "/foo", {})
@@ -1834,6 +1854,89 @@ describe "src/cy/commands/xhr", ->
     it "has not aborted the xhrs", ->
       _.each xhrs, (xhr) ->
         expect(xhr.aborted).not.to.be.false
+
+    it "aborts xhrs that haven't been sent", ->
+      cy
+      .window()
+      .then (win) ->
+        xhr = new win.XMLHttpRequest()
+        xhr.open("GET", "/timeout?ms=0")
+        xhr.abort()
+
+        expect(xhr.aborted).to.be.true
+
+    it "aborts xhrs currently in flight", ->
+      log = null
+
+      cy.on "log:changed", (attrs, l) =>
+        if attrs.name is "xhr"
+          if not log
+            log = l
+
+      cy
+      .window()
+      .then (win) ->
+        xhr = new win.XMLHttpRequest()
+        xhr.open("GET", "/timeout?ms=999")
+        xhr.send()
+        xhr.abort()
+
+        cy.wrap(null).should ->
+          expect(log.get("state")).to.eq("failed")
+          expect(xhr.aborted).to.be.true
+
+    ## https://github.com/cypress-io/cypress/issues/3008
+    it "aborts xhrs even when responseType  not '' or 'text'", ->
+      log = null
+
+      cy.on "log:changed", (attrs, l) =>
+        if attrs.name is "xhr"
+          if not log
+            log = l
+
+      cy
+      .window()
+      .then (win) ->
+        xhr = new win.XMLHttpRequest()
+        xhr.responseType = 'arraybuffer'
+        xhr.open("GET", "/timeout?ms=1000")
+        xhr.send()
+        xhr.abort()
+
+        cy.wrap(null).should ->
+          expect(log.get("state")).to.eq("failed")
+          expect(xhr.aborted).to.be.true
+
+    ## https://github.com/cypress-io/cypress/issues/1652
+    it "does not set aborted on XHR's that have completed by have had .abort() called", ->
+      log = null
+
+      cy.on "log:changed", (attrs, l) =>
+        if attrs.name is "xhr"
+          if not log
+            log = l
+
+      cy
+      .window()
+      .then (win) ->
+        new Promise (resolve) ->
+          xhr = new win.XMLHttpRequest()
+          xhr.open("GET", "/timeout?ms=0")
+          xhr.onload = ->
+            xhr.abort()
+            xhr.foo = "bar"
+            resolve(xhr)
+          xhr.send()
+      .then (xhr) ->
+        cy
+        .wrap(null)
+        .should ->
+          ## ensure this is set to prevent accidental
+          ## race conditions down the road if something
+          ## goes wrong
+          expect(xhr.foo).to.eq("bar")
+          expect(xhr.aborted).not.to.be.true
+          expect(log.get("state")).to.eq("passed")
 
   context "Cypress.on(window:unload)", ->
     it "aborts all open XHR's", ->
