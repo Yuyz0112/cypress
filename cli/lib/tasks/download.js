@@ -2,6 +2,7 @@
  * This fork modify the download url and related functions.
  */
 
+const arch = require('arch')
 const la = require('lazy-ass')
 const is = require('check-more-types')
 const os = require('os')
@@ -18,11 +19,40 @@ const fs = require('../fs')
 const util = require('../util')
 
 const baseUrl = 'http://binary.myriptide.com/'
+const defaultBaseUrl = 'https://download.cypress.io/'
+
+const getRealOsArch = () => {
+  // os.arch() returns the arch for which this node was compiled
+  // we want the operating system's arch instead: x64 or x86
+
+  const osArch = arch()
+
+  if (osArch === 'x86') {
+    // match process.platform output
+    return 'ia32'
+  }
+
+  return osArch
+}
+
+const getBaseUrl = () => {
+  if (util.getEnv('CYPRESS_DOWNLOAD_MIRROR')) {
+    let baseUrl = util.getEnv('CYPRESS_DOWNLOAD_MIRROR')
+
+    if (!baseUrl.endsWith('/')) {
+      baseUrl += '/'
+    }
+
+    return baseUrl
+  }
+
+  return defaultBaseUrl
+}
 
 const prepend = (urlPath) => {
   const endpoint = url.resolve(baseUrl, urlPath)
   const platform = os.platform()
-  const arch = os.arch()
+  const arch = getRealOsArch()
 
   return `${endpoint}_${platform}_${arch}.zip`
 }
