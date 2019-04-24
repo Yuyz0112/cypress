@@ -86,8 +86,8 @@ class Server
   _makeDirectConnection: (req, socket, head) ->
     { port, hostname } = url.parse("http://#{req.url}")
 
-    if upstreamProxy = @_upstreamProxyForHostPort(hostname, port)
-      return @_makeUpstreamProxyConnection(upstreamProxy, socket, head, port, hostname)
+    # if upstreamProxy = @_upstreamProxyForHostPort(hostname, port)
+    #   return @_makeUpstreamProxyConnection(upstreamProxy, socket, head, port, hostname)
 
     debug("Making direct connection to #{hostname}:#{port}")
     @_makeConnection(socket, head, port, hostname)
